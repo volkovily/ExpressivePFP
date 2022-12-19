@@ -1,0 +1,26 @@
+#getAvatar {
+  width: 30px;
+  height: 30px;
+  margin-left: 20px;
+  margin-top: 150px;
+  display: flex;
+}
+
+#canvasEditor {
+  border: 1px solid black;
+}
+
+#container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -105%);
+  display: flex;
+}
+
+#imagePreview {
+  margin-left: 20px;
+  width: 300px;
+  height: 300px;
+  border: 1px solid black;
+}
