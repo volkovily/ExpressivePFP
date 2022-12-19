@@ -1,7 +1,14 @@
 const canvas = new fabric.Canvas("canvasEditor");
 const emojiPicker = document.querySelector("emoji-picker");
+const imageRender = document.getElementById("imageRender");
+const renderImageBtn = document.getElementById("renderImageBtn");
 
 canvasImage();
+
+renderImageBtn.addEventListener("click", function () {
+  const dataUrl = canvas.toDataURL();
+  imageRender.src = dataUrl;
+});
 
 emojiPicker.addEventListener("emoji-click", (emoji) => {
   const textbox = new fabric.Textbox(emoji.detail.unicode, {
