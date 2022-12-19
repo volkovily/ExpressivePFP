@@ -13,8 +13,8 @@ renderImageBtn.addEventListener("click", function () {
 emojiPicker.addEventListener("emoji-click", (emoji) => {
   const textbox = new fabric.Textbox(emoji.detail.unicode, {
     editable: false,
-    left: 100,
-    top: 100,
+    left: Math.random() * 200,
+    top: Math.random() * 200,
   });
   canvas.add(textbox);
 });
