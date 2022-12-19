@@ -6,6 +6,17 @@
   display: flex;
 }
 
+emoji-picker {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -45%);
+  margin-top: 150px;
+  border: 1px solid black;
+  width: 400px;
+  height: 300px;
+}
+
 #canvasEditor {
   border: 1px solid black;
 }
