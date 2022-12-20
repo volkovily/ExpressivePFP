@@ -2,6 +2,7 @@ const canvas = new fabric.Canvas("canvasEditor");
 const emojiPicker = document.querySelector("emoji-picker");
 const imageRender = document.getElementById("imageRender");
 const renderImageBtn = document.getElementById("renderImageBtn");
+const clearCanvasBtn = document.getElementById("clearCanvasBtn");
 
 canvasImage();
 
@@ -29,6 +30,11 @@ function canvasImage() {
     });
   };
 }
+
+clearCanvasBtn.addEventListener("click", function () {
+  canvas.clear();
+  canvasImage();
+});
 
 renderImageBtn.addEventListener("click", function () {
   const dataUrl = canvas.toDataURL();
