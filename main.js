@@ -3,6 +3,7 @@ const emojiPicker = document.querySelector("emoji-picker");
 const imageRender = document.getElementById("imageRender");
 const renderImageBtn = document.getElementById("renderImageBtn");
 const clearCanvasBtn = document.getElementById("clearCanvasBtn");
+const randomFaceBtn = document.getElementById("randomFaceBtn");
 
 canvasImage();
 
@@ -13,6 +14,38 @@ emojiPicker.addEventListener("emoji-click", (emoji) => {
     top: Math.random() * 200,
   });
   canvas.add(textbox);
+});
+
+function getRandomEmojiHex() {
+  const hex = Math.floor(Math.random() * (0x644 - 0x600 + 1)) + 0x600;
+  return hex.toString(16);
+}
+
+function removeLastRandomFace() {
+  canvas.forEachObject(function (object) {
+    if (object.fontSize === 120.12) {
+      canvas.remove(object);
+    }
+  });
+  canvas.renderAll();
+}
+
+function generateRandomFace() {
+  const unicode = "1F" + getRandomEmojiHex();
+  const randomEmoji = String.fromCodePoint(parseInt(unicode, 16));
+
+  const textbox = new fabric.Textbox(randomEmoji, {
+    editable: false,
+    left: 67,
+    top: 40,
+    fontSize: 120.12,
+  });
+  canvas.add(textbox);
+}
+
+randomFaceBtn.addEventListener("click", function () {
+  removeLastRandomFace();
+  generateRandomFace();
 });
 
 function canvasImage() {
