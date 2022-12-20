@@ -5,11 +5,6 @@ const renderImageBtn = document.getElementById("renderImageBtn");
 
 canvasImage();
 
-renderImageBtn.addEventListener("click", function () {
-  const dataUrl = canvas.toDataURL();
-  imageRender.src = dataUrl;
-});
-
 emojiPicker.addEventListener("emoji-click", (emoji) => {
   const textbox = new fabric.Textbox(emoji.detail.unicode, {
     editable: false,
@@ -34,3 +29,14 @@ function canvasImage() {
     });
   };
 }
+
+renderImageBtn.addEventListener("click", function () {
+  const dataUrl = canvas.toDataURL();
+  imageRender.src = dataUrl;
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.code === "KeyX") {
+    canvas.remove(canvas.getActiveObject());
+  }
+});
