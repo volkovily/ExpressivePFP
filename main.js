@@ -4,6 +4,8 @@ const imageRender = document.getElementById("imageRender");
 const renderImageBtn = document.getElementById("renderImageBtn");
 const clearCanvasBtn = document.getElementById("clearCanvasBtn");
 const randomFaceBtn = document.getElementById("randomFaceBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+const buttonsRendered = document.getElementById("buttonsRendered");
 
 canvasImage();
 
@@ -64,12 +66,26 @@ function canvasImage() {
   };
 }
 
+downloadBtn.addEventListener("click", function () {
+  downloadImage(imageRender.src);
+});
+
+function downloadImage(url) {
+  let anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = url;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+}
+
 clearCanvasBtn.addEventListener("click", function () {
   canvas.clear();
   canvasImage();
 });
 
 renderImageBtn.addEventListener("click", function () {
+  buttonsRendered.style.visibility = "visible";
   const dataUrl = canvas.toDataURL();
   imageRender.src = dataUrl;
 });

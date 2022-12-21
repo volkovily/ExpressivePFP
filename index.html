@@ -6,14 +6,23 @@
   </head>
   <body>
     <div id="container">
-      <canvas id="canvasEditor" width="300" height="300"></canvas>
+      <div id="canvasContainer">
+        <canvas id="canvasEditor" width="300" height="300"></canvas>
+        <div id="button_container">
+          <button id="clearCanvasBtn">Clear</button>
+          <button id="randomFaceBtn">Random Face</button>
+        </div>
+      </div>
       <button id="renderImageBtn">🡲</button>
-      <img src="" id="imageRender" crossorigin="anonymous" />
+      <div id="imageContainer">
+        <img src="" id="imageRender" />
+        <div id="buttonsRendered">
+          <button id="downloadBtn">Download</button>
+        </div>
+      </div>
     </div>
 
     <emoji-picker></emoji-picker>
-    <button id="clearCanvasBtn">Clear</button>
-    <button id="randomFaceBtn">Random Face</button>
     <script
       type="module"
       src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"

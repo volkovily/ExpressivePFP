@@ -21,6 +21,17 @@ emoji-picker {
   border: 1px solid black;
 }
 
+#button_container {
+  margin-top: 10px;
+  text-align: center;
+}
+
+#buttonsRendered {
+  margin-top: 4px;
+  text-align: center;
+  visibility: hidden;
+}
+
 #container {
   position: fixed;
   top: 50%;
