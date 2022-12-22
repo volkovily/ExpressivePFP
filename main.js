@@ -22,7 +22,7 @@ emojiPicker.addEventListener("emoji-click", (emoji) => {
 });
 
 function getRandomEmojiHex() {
-  const hex = Math.floor(Math.random() * (0x644 - 0x600 + 1)) + 0x600;
+  const hex = Math.floor(Math.random() * (0x637 - 0x600 + 1)) + 0x600;
   return hex.toString(16);
 }
 
