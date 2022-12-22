@@ -41,11 +41,28 @@ function generateRandomFace() {
 
   const textbox = new fabric.Textbox(randomEmoji, {
     editable: false,
-    left: 67,
-    top: 40,
+    left: 66,
+    top: getFacePose(),
     fontSize: 120.12,
   });
   canvas.add(textbox);
+}
+
+function getFacePose() {
+  const backgroundImageSrc = canvas.backgroundImage.getSrc();
+
+  switch (backgroundImageSrc) {
+    case backgroundTTBtn.src:
+      return 40;
+    case backgroundGoogleBtn.src:
+      return 50;
+    case backgroundTwBtn.src:
+      return 70;
+    case backgroundInstBtn.src:
+      return 80;
+    default:
+      return 40;
+  }
 }
 
 randomFaceBtn.addEventListener("click", function () {
@@ -54,11 +71,10 @@ randomFaceBtn.addEventListener("click", function () {
 });
 
 const setCanvasBackground = (imageSrc) => {
-  canvas.setBackgroundImage(imageSrc, canvas.renderAll.bind(canvas), {
-    backgroundImageOpacity: 1,
-    backgroundImageStretch: false,
-  });
+  canvas.setBackgroundImage(imageSrc, canvas.renderAll.bind(canvas), {});
 };
+
+setCanvasBackground(backgroundTTBtn.src);
 
 backgroundTTBtn.addEventListener("click", () =>
   setCanvasBackground(backgroundTTBtn.src)
