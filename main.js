@@ -7,7 +7,10 @@ const randomFaceBtn = document.getElementById("randomFaceBtn");
 const downloadBtn = document.getElementById("downloadBtn");
 const buttonsRendered = document.getElementById("buttonsRendered");
 
-canvasImage();
+const backgroundTTBtn = document.getElementById("backgroundTTBtn");
+const backgroundGoogleBtn = document.getElementById("backgroundGoogleBtn");
+const backgroundTwBtn = document.getElementById("backgroundTwBtn");
+const backgroundInstBtn = document.getElementById("backgroundInstBtn");
 
 emojiPicker.addEventListener("emoji-click", (emoji) => {
   const textbox = new fabric.Textbox(emoji.detail.unicode, {
@@ -50,21 +53,25 @@ randomFaceBtn.addEventListener("click", function () {
   generateRandomFace();
 });
 
-function canvasImage() {
-  const image = new Image();
-  image.src = "assets/default.jpg";
-  image.onload = () => {
-    fabric.Image.fromURL(image.src, function (img) {
-      img.scaleToWidth(canvas.getWidth());
-      img.scaleToHeight(canvas.getHeight());
-      img.set({
-        selectable: false,
-        evented: false,
-      });
-      canvas.add(img);
-    });
-  };
-}
+const setCanvasBackground = (imageSrc) => {
+  canvas.setBackgroundImage(imageSrc, canvas.renderAll.bind(canvas), {
+    backgroundImageOpacity: 1,
+    backgroundImageStretch: false,
+  });
+};
+
+backgroundTTBtn.addEventListener("click", () =>
+  setCanvasBackground(backgroundTTBtn.src)
+);
+backgroundGoogleBtn.addEventListener("click", () =>
+  setCanvasBackground(backgroundGoogleBtn.src)
+);
+backgroundTwBtn.addEventListener("click", () =>
+  setCanvasBackground(backgroundTwBtn.src)
+);
+backgroundInstBtn.addEventListener("click", () =>
+  setCanvasBackground(backgroundInstBtn.src)
+);
 
 downloadBtn.addEventListener("click", function () {
   downloadImage(imageRender.src);
