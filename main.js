@@ -109,6 +109,11 @@ templateFileInput.addEventListener("change", function (event) {
   reader.addEventListener("load", function () {
     const json = JSON.parse(reader.result);
     canvas.loadFromJSON(json, function () {
+      for (const object of canvas._objects) {
+        if (object.type === "textbox") {
+          object.set({ editable: false });
+        }
+      }
       canvas.renderAll();
     });
   });
