@@ -12,6 +12,10 @@ const backgroundGoogleBtn = document.getElementById("backgroundGoogleBtn");
 const backgroundTwBtn = document.getElementById("backgroundTwBtn");
 const backgroundInstBtn = document.getElementById("backgroundInstBtn");
 
+const templateExportBtn = document.getElementById("saveTemplateBtn");
+const templateImportBtn = document.getElementById("importTemplateBtn");
+const templateFileInput = document.getElementById("templateFileInput");
+
 emojiPicker.addEventListener("emoji-click", (emoji) => {
   const textbox = new fabric.Textbox(emoji.detail.unicode, {
     editable: false,
@@ -74,6 +78,43 @@ const setCanvasBackground = (imageSrc) => {
   canvas.setBackgroundImage(imageSrc, canvas.renderAll.bind(canvas), {});
 };
 
+function downloadImage(url) {
+  let anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = url;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+}
+
+function exportTemplateAsJSON() {
+  const json = canvas.toJSON();
+  const blob = new Blob([JSON.stringify(json)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "template.json";
+
+  document.body.appendChild(anchor);
+  anchor.click();
+
+  document.body.removeChild(anchor);
+}
+
+templateFileInput.addEventListener("change", function (event) {
+  const file = event.target.files[0];
+
+  const reader = new FileReader();
+  reader.addEventListener("load", function () {
+    const json = JSON.parse(reader.result);
+    canvas.loadFromJSON(json, function () {
+      canvas.renderAll();
+    });
+  });
+  reader.readAsText(file);
+});
+
 setCanvasBackground(backgroundTTBtn.src);
 
 backgroundTTBtn.addEventListener("click", () =>
@@ -93,14 +134,13 @@ downloadBtn.addEventListener("click", function () {
   downloadImage(imageRender.src);
 });
 
-function downloadImage(url) {
-  let anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = url;
-  document.body.appendChild(anchor);
-  anchor.click();
-  document.body.removeChild(anchor);
-}
+templateExportBtn.addEventListener("click", function () {
+  exportTemplateAsJSON();
+});
+
+templateImportBtn.addEventListener("click", function () {
+  document.getElementById("templateFileInput").click();
+});
 
 clearCanvasBtn.addEventListener("click", function () {
   canvas.clear();
