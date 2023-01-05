@@ -16,6 +16,8 @@ const templateExportBtn = document.getElementById("saveTemplateBtn");
 const templateImportBtn = document.getElementById("importTemplateBtn");
 const templateFileInput = document.getElementById("templateFileInput");
 
+let history = [];
+
 emojiPicker.addEventListener("emoji-click", (emoji) => {
   const textbox = new fabric.Textbox(emoji.detail.unicode, {
     editable: false,
@@ -69,14 +71,31 @@ function getFacePose() {
   }
 }
 
-randomFaceBtn.addEventListener("click", function () {
-  removeLastRandomFace();
-  generateRandomFace();
-});
+const saveCurrentState = () => {
+  const json = canvas.toJSON();
+  const image = canvas.toDataURL({});
+  history.push({ template: json, image });
+};
+
+const renderHistory = () => {
+  const historyDiv = document.getElementById("history");
+  historyDiv.innerHTML = "";
+  for (const historyItem of history) {
+    const img = document.createElement("img");
+    img.src = historyItem.image;
+    img.addEventListener("click", () => {
+      canvas.loadFromJSON(historyItem.template, canvas.renderAll.bind(canvas));
+    });
+    img.classList.add("history-image");
+    historyDiv.appendChild(img);
+  }
+};
 
 const setCanvasBackground = (imageSrc) => {
   canvas.setBackgroundImage(imageSrc, canvas.renderAll.bind(canvas), {});
 };
+
+setCanvasBackground(backgroundTTBtn.src);
 
 function downloadImage(url) {
   let anchor = document.createElement("a");
@@ -120,20 +139,19 @@ templateFileInput.addEventListener("change", function (event) {
   reader.readAsText(file);
 });
 
-setCanvasBackground(backgroundTTBtn.src);
+renderImageBtn.addEventListener("click", function () {
+  buttonsRendered.style.visibility = "visible";
+  const dataUrl = canvas.toDataURL();
+  imageRender.src = dataUrl;
 
-backgroundTTBtn.addEventListener("click", () =>
-  setCanvasBackground(backgroundTTBtn.src)
-);
-backgroundGoogleBtn.addEventListener("click", () =>
-  setCanvasBackground(backgroundGoogleBtn.src)
-);
-backgroundTwBtn.addEventListener("click", () =>
-  setCanvasBackground(backgroundTwBtn.src)
-);
-backgroundInstBtn.addEventListener("click", () =>
-  setCanvasBackground(backgroundInstBtn.src)
-);
+  saveCurrentState();
+  renderHistory();
+});
+
+randomFaceBtn.addEventListener("click", function () {
+  removeLastRandomFace();
+  generateRandomFace();
+});
 
 downloadBtn.addEventListener("click", function () {
   downloadImage(imageRender.src);
@@ -152,11 +170,18 @@ clearCanvasBtn.addEventListener("click", function () {
   canvasImage();
 });
 
-renderImageBtn.addEventListener("click", function () {
-  buttonsRendered.style.visibility = "visible";
-  const dataUrl = canvas.toDataURL();
-  imageRender.src = dataUrl;
-});
+backgroundTTBtn.addEventListener("click", () =>
+  setCanvasBackground(backgroundTTBtn.src)
+);
+backgroundGoogleBtn.addEventListener("click", () =>
+  setCanvasBackground(backgroundGoogleBtn.src)
+);
+backgroundTwBtn.addEventListener("click", () =>
+  setCanvasBackground(backgroundTwBtn.src)
+);
+backgroundInstBtn.addEventListener("click", () =>
+  setCanvasBackground(backgroundInstBtn.src)
+);
 
 document.addEventListener("keydown", (event) => {
   if (event.code === "KeyX") {

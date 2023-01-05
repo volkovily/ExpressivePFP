@@ -66,6 +66,31 @@ emoji-picker {
   display: flex;
 }
 
+#history {
+  margin-left: 20px;
+  width: 300px;
+  height: 500px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  box-sizing: border-box;
+  border: 1px solid black;
+  overflow: auto;
+}
+
+.history-image {
+  width: 85px;
+  height: 85px;
+  border: 1px solid #ccc;
+  padding: 2px;
+  box-sizing: border-box;
+}
+
+.history-image:hover {
+  border-color: #999;
+  cursor: pointer;
+}
+
 #imageRender {
   margin-left: 20px;
   width: 300px;
