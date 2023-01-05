@@ -71,10 +71,17 @@ function getFacePose() {
   }
 }
 
+function isTemplateInHistory(image) {
+  return history.some((historyItem) => historyItem.image === image);
+}
+
 const saveCurrentState = () => {
-  const json = canvas.toJSON();
   const image = canvas.toDataURL({});
-  history.push({ template: json, image });
+
+  if (!isTemplateInHistory(image)) {
+    const json = canvas.toJSON();
+    history.push({ template: json, image });
+  }
 };
 
 const renderHistory = () => {
@@ -166,6 +173,7 @@ templateImportBtn.addEventListener("click", function () {
 });
 
 clearCanvasBtn.addEventListener("click", function () {
+  setCanvasBackground(backgroundTTBtn.src);
   canvas.clear();
   canvasImage();
 });
