@@ -16,13 +16,21 @@ const templateExportBtn = document.getElementById("saveTemplateBtn");
 const templateImportBtn = document.getElementById("importTemplateBtn");
 const templateFileInput = document.getElementById("templateFileInput");
 
+const MAX_EMOJI_OFFSET = 200;
+const FACE_LEFT_OFFSET = 66;
+const FACE_TT_OFFSET = 40;
+const FACE_GOOGLE_OFFSET = 50;
+const FACE_TWITTER_OFFSET = 70;
+const FACE_INST_OFFSET = 80;
+const FACE_FONT_SIZE = 120.12;
+
 let history = [];
 
 emojiPicker.addEventListener("emoji-click", (emoji) => {
   const textbox = new fabric.Textbox(emoji.detail.unicode, {
     editable: false,
-    left: Math.random() * 200,
-    top: Math.random() * 200,
+    left: Math.random() * MAX_EMOJI_OFFSET,
+    top: Math.random() * MAX_EMOJI_OFFSET,
   });
   canvas.add(textbox);
 });
@@ -34,7 +42,7 @@ function getRandomEmojiHex() {
 
 function removeLastRandomFace() {
   canvas.forEachObject(function (object) {
-    if (object.fontSize === 120.12) {
+    if (object.fontSize === EMOJI_FONT_SIZE) {
       canvas.remove(object);
     }
   });
@@ -47,9 +55,9 @@ function generateRandomFace() {
 
   const textbox = new fabric.Textbox(randomEmoji, {
     editable: false,
-    left: 66,
+    left: FACE_LEFT_OFFSET,
     top: getFacePose(),
-    fontSize: 120.12,
+    fontSize: EMOJI_FONT_SIZE,
   });
   canvas.add(textbox);
 }
@@ -59,15 +67,15 @@ function getFacePose() {
 
   switch (backgroundImageSrc) {
     case backgroundTTBtn.src:
-      return 40;
+      return FACE_TT_OFFSET;
     case backgroundGoogleBtn.src:
-      return 50;
+      return FACE_GOOGLE_OFFSET;
     case backgroundTwBtn.src:
-      return 70;
+      return FACE_TWITTER_OFFSET;
     case backgroundInstBtn.src:
-      return 80;
+      return FACE_INST_OFFSET;
     default:
-      return 40;
+      return FACE_TT_OFFSET;
   }
 }
 
