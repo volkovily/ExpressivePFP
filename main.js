@@ -11,25 +11,30 @@ const templateExportBtn = document.getElementById("saveTemplateBtn");
 const templateImportBtn = document.getElementById("importTemplateBtn");
 const templateFileInput = document.getElementById("templateFileInput");
 
-const backgroundButtons = document.querySelectorAll(
-  "#backgroundTTBtn, #backgroundGoogleBtn, #backgroundTwBtn, #backgroundInstBtn"
-);
+const backgroundButtons = {
+  bgTikTokBtn: document.getElementById("backgroundTTBtn"),
+  bgGoogleBtn: document.getElementById("backgroundGoogleBtn"),
+  bgTwitterBtn: document.getElementById("backgroundTwBtn"),
+  bgInstBtn: document.getElementById("backgroundInstBtn")
+};
 
-const MAX_EMOJI_OFFSET = 200;
-const FACE_LEFT_OFFSET = 66;
-const FACE_TT_OFFSET = 40;
-const FACE_GOOGLE_OFFSET = 50;
-const FACE_TWITTER_OFFSET = 70;
-const FACE_INST_OFFSET = 80;
-const FACE_FONT_SIZE = 120.12;
+const OFFSETS = {
+  MAX_EMOJI_OFFSET: 200,
+  FACE_LEFT_OFFSET: 66,
+  FACE_TT_OFFSET: 40,
+  FACE_GOOGLE_OFFSET: 50,
+  FACE_TWITTER_OFFSET: 70,
+  FACE_INST_OFFSET: 80,
+  FACE_FONT_SIZE: 120.12
+}
 
 let history = [];
 
 emojiPicker.addEventListener("emoji-click", (emoji) => {
   const textbox = new fabric.Textbox(emoji.detail.unicode, {
     editable: false,
-    left: Math.random() * MAX_EMOJI_OFFSET,
-    top: Math.random() * MAX_EMOJI_OFFSET,
+    left: Math.random() * OFFSETS.MAX_EMOJI_OFFSET,
+    top: Math.random() * OFFSETS.MAX_EMOJI_OFFSET,
   });
   canvas.add(textbox);
 });
@@ -40,11 +45,11 @@ function getRandomEmojiHex() {
 }
 
 const removeLastRandomFace = () => {
-  canvas.forEachObject((object) => {
-    if (object.fontSize === FACE_FONT_SIZE) {
+  for (const object of canvas._objects) {
+    if (object.fontSize === OFFSETS.FACE_FONT_SIZE) {
       canvas.remove(object);
     }
-  });
+  }
   canvas.renderAll();
 };
 
@@ -54,9 +59,9 @@ const generateRandomFace = () => {
 
   const textbox = new fabric.Textbox(randomEmoji, {
     editable: false,
-    left: FACE_LEFT_OFFSET,
+    left: OFFSETS.FACE_LEFT_OFFSET,
     top: getFacePose(),
-    fontSize: FACE_FONT_SIZE,
+    fontSize: OFFSETS.FACE_FONT_SIZE,
   });
   canvas.add(textbox);
 };
@@ -65,16 +70,16 @@ function getFacePose() {
   const backgroundImageSrc = canvas.backgroundImage.getSrc();
 
   switch (backgroundImageSrc) {
-    case backgroundTTBtn.src:
-      return FACE_TT_OFFSET;
-    case backgroundGoogleBtn.src:
-      return FACE_GOOGLE_OFFSET;
-    case backgroundTwBtn.src:
-      return FACE_TWITTER_OFFSET;
-    case backgroundInstBtn.src:
-      return FACE_INST_OFFSET;
+    case backgroundButtons.bgTikTokBtn.src:
+      return OFFSETS.FACE_TT_OFFSET;
+    case backgroundButtons.bgGoogleBtn.src:
+      return OFFSETS.FACE_GOOGLE_OFFSET;
+    case backgroundButtons.bgTwitterBtn.src:
+      return OFFSETS.FACE_TWITTER_OFFSET;
+    case backgroundButtons.bgInstBtn.src:
+      return OFFSETS.FACE_INST_OFFSET;
     default:
-      return FACE_TT_OFFSET;
+      return OFFSETS.FACE_TT_OFFSET;
   }
 }
 
@@ -109,13 +114,13 @@ const setCanvasBackground = (imageSrc) => {
   canvas.setBackgroundImage(imageSrc, canvas.renderAll.bind(canvas), {});
 };
 
-for (const button of backgroundButtons) {
+for (const button of Object.values(backgroundButtons)) {
   button.addEventListener("click", () => {
     setCanvasBackground(button.src);
   });
 }
 
-setCanvasBackground(backgroundTTBtn.src);
+setCanvasBackground(backgroundButtons.bgTikTokBtn.src);
 
 function downloadImage(url) {
   let anchor = document.createElement("a");
@@ -186,7 +191,7 @@ templateImportBtn.addEventListener("click", function () {
 });
 
 clearCanvasBtn.addEventListener("click", function () {
-  setCanvasBackground(backgroundTTBtn.src);
+  setCanvasBackground(backgroundButtons.bgTikTokBtn.src);
   canvas.clear();
   canvasImage();
 });
