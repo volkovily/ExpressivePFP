@@ -7,14 +7,13 @@ const randomFaceBtn = document.getElementById("randomFaceBtn");
 const downloadBtn = document.getElementById("downloadBtn");
 const buttonsRendered = document.getElementById("buttonsRendered");
 
-const backgroundTTBtn = document.getElementById("backgroundTTBtn");
-const backgroundGoogleBtn = document.getElementById("backgroundGoogleBtn");
-const backgroundTwBtn = document.getElementById("backgroundTwBtn");
-const backgroundInstBtn = document.getElementById("backgroundInstBtn");
-
 const templateExportBtn = document.getElementById("saveTemplateBtn");
 const templateImportBtn = document.getElementById("importTemplateBtn");
 const templateFileInput = document.getElementById("templateFileInput");
+
+const backgroundButtons = document.querySelectorAll(
+  "#backgroundTTBtn, #backgroundGoogleBtn, #backgroundTwBtn, #backgroundInstBtn"
+);
 
 const MAX_EMOJI_OFFSET = 200;
 const FACE_LEFT_OFFSET = 66;
@@ -40,16 +39,16 @@ function getRandomEmojiHex() {
   return hex.toString(16);
 }
 
-function removeLastRandomFace() {
-  canvas.forEachObject(function (object) {
-    if (object.fontSize === EMOJI_FONT_SIZE) {
+const removeLastRandomFace = () => {
+  canvas.forEachObject((object) => {
+    if (object.fontSize === FACE_FONT_SIZE) {
       canvas.remove(object);
     }
   });
   canvas.renderAll();
-}
+};
 
-function generateRandomFace() {
+const generateRandomFace = () => {
   const unicode = "1F" + getRandomEmojiHex();
   const randomEmoji = String.fromCodePoint(parseInt(unicode, 16));
 
@@ -57,10 +56,10 @@ function generateRandomFace() {
     editable: false,
     left: FACE_LEFT_OFFSET,
     top: getFacePose(),
-    fontSize: EMOJI_FONT_SIZE,
+    fontSize: FACE_FONT_SIZE,
   });
   canvas.add(textbox);
-}
+};
 
 function getFacePose() {
   const backgroundImageSrc = canvas.backgroundImage.getSrc();
@@ -109,6 +108,12 @@ const renderHistory = () => {
 const setCanvasBackground = (imageSrc) => {
   canvas.setBackgroundImage(imageSrc, canvas.renderAll.bind(canvas), {});
 };
+
+for (const button of backgroundButtons) {
+  button.addEventListener("click", () => {
+    setCanvasBackground(button.src);
+  });
+}
 
 setCanvasBackground(backgroundTTBtn.src);
 
@@ -185,19 +190,6 @@ clearCanvasBtn.addEventListener("click", function () {
   canvas.clear();
   canvasImage();
 });
-
-backgroundTTBtn.addEventListener("click", () =>
-  setCanvasBackground(backgroundTTBtn.src)
-);
-backgroundGoogleBtn.addEventListener("click", () =>
-  setCanvasBackground(backgroundGoogleBtn.src)
-);
-backgroundTwBtn.addEventListener("click", () =>
-  setCanvasBackground(backgroundTwBtn.src)
-);
-backgroundInstBtn.addEventListener("click", () =>
-  setCanvasBackground(backgroundInstBtn.src)
-);
 
 document.addEventListener("keydown", (event) => {
   if (event.code === "KeyX") {
