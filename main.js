@@ -30,6 +30,35 @@ const OFFSETS = {
 
 let history = [];
 
+const fetchAvatarBtn = document.getElementById("fetchAvatarBtn");
+fetchAvatarBtn.addEventListener("click", fetchAvatar);
+
+async function fetchAvatar() {
+  const username = prompt("Enter a GitHub username:");
+  if (!username) {
+    return;
+  }
+  try {
+    const response = await fetch(`https://api.github.com/users/${username}`);
+    if (response.ok) {
+      const json = await response.json();
+      const fetchedImage = new Image();
+      fetchedImage.crossOrigin = "Anonymous";
+      fetchedImage.onload = function () {
+        const imgInstance = new fabric.Image(fetchedImage);
+        imgInstance.scaleToWidth(canvas.width * 0.8);
+        canvas.setBackgroundImage(imgInstance, canvas.renderAll.bind(canvas));
+      };
+      fetchedImage.src = json.avatar_url + "?not-from-cache-please";
+    } else {
+      alert(`The user "${username}" could not be found.`);
+    }
+  } catch (error) {
+    console.error(error);
+    alert("An error occurred while fetching the avatar.");
+  }
+}
+
 emojiPicker.addEventListener("emoji-click", (emoji) => {
   const textbox = new fabric.Textbox(emoji.detail.unicode, {
     editable: false,
