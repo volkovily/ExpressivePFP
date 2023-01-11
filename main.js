@@ -11,6 +11,35 @@ const templateExportBtn = document.getElementById("saveTemplateBtn");
 const templateImportBtn = document.getElementById("importTemplateBtn");
 const templateFileInput = document.getElementById("templateFileInput");
 
+const fetchAvatarBtn = document.getElementById("fetchAvatarBtn");
+fetchAvatarBtn.addEventListener("click", fetchAvatar);
+
+async function fetchAvatar() {
+  const username = prompt("Enter a GitHub username:");
+  if (!username) {
+    return;
+  }
+  
+  try {
+    const response = await fetch(`https://api.github.com/users/${username}`);
+    if(response.ok){
+    const json = await response.json();
+    const img = new Image();
+    img.onload = function() {
+        const imgInstance = new fabric.Image(img);
+        imgInstance.scaleToWidth(canvas.width*0.8);
+        canvas.setBackgroundImage(imgInstance, canvas.renderAll.bind(canvas));
+    }
+    img.src = json.avatar_url;
+    }else{
+       alert(`The user "${username}" could not be found.`);
+    }
+  } catch (error) {
+    console.error(error);
+    alert('An error occurred while fetching the avatar.');
+  }
+}
+
 const backgroundButtons = {
   bgTikTokBtn: document.getElementById("backgroundTTBtn"),
   bgGoogleBtn: document.getElementById("backgroundGoogleBtn"),
