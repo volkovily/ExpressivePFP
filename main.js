@@ -48,6 +48,8 @@ async function fetchAvatar() {
         const imgInstance = new fabric.Image(fetchedImage);
         imgInstance.scaleToWidth(canvas.width * 0.8);
         canvas.setBackgroundImage(imgInstance, canvas.renderAll.bind(canvas));
+        imgInstance.scaleToWidth(canvas.getWidth());
+        canvas.centerObject(imgInstance);
       };
       fetchedImage.src = json.avatar_url + "?not-from-cache-please";
     } else {
