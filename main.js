@@ -15,7 +15,7 @@ const backgroundButtons = {
   bgTikTokBtn: document.getElementById("backgroundTTBtn"),
   bgGoogleBtn: document.getElementById("backgroundGoogleBtn"),
   bgTwitterBtn: document.getElementById("backgroundTwBtn"),
-  bgInstBtn: document.getElementById("backgroundInstBtn")
+  bgInstBtn: document.getElementById("backgroundInstBtn"),
 };
 
 const OFFSETS = {
@@ -25,8 +25,8 @@ const OFFSETS = {
   FACE_GOOGLE_OFFSET: 50,
   FACE_TWITTER_OFFSET: 70,
   FACE_INST_OFFSET: 80,
-  FACE_FONT_SIZE: 120.12
-}
+  FACE_FONT_SIZE: 120.12,
+};
 
 let history = [];
 
@@ -137,7 +137,17 @@ const renderHistory = () => {
       canvas.loadFromJSON(historyItem.template, canvas.renderAll.bind(canvas));
     });
     img.classList.add("history-image");
+    img.addEventListener("contextmenu", removeItemFromHistory);
     historyDiv.appendChild(img);
+  }
+};
+
+const removeItemFromHistory = (e) => {
+  e.preventDefault();
+  if (confirm(`Delete selected image?`)) {
+    const image = e.target.src;
+    history = history.filter((historyItem) => historyItem.image !== image);
+    renderHistory();
   }
 };
 
