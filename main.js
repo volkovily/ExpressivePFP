@@ -21,11 +21,14 @@ const backgroundButtons = {
 const OFFSETS = {
   MAX_EMOJI_OFFSET: 200,
   FACE_LEFT_OFFSET: 66,
+  FACE_FONT_SIZE: 120.12,
+};
+
+const FACE_TOP_OFFSETS = {
   FACE_TT_OFFSET: 40,
   FACE_GOOGLE_OFFSET: 50,
   FACE_TWITTER_OFFSET: 70,
   FACE_INST_OFFSET: 80,
-  FACE_FONT_SIZE: 120.12,
 };
 
 let history = [];
@@ -79,12 +82,14 @@ const removeLastRandomFace = () => {
   for (const object of canvas._objects) {
     if (object.fontSize === OFFSETS.FACE_FONT_SIZE) {
       canvas.remove(object);
+      canvas.renderAll();
+      break;
     }
   }
-  canvas.renderAll();
 };
 
 const generateRandomFace = () => {
+  removeLastRandomFace();
   const unicode = "1F" + getRandomEmojiHex();
   const randomEmoji = String.fromCodePoint(parseInt(unicode, 16));
 
@@ -102,15 +107,15 @@ function getFacePose() {
 
   switch (backgroundImageSrc) {
     case backgroundButtons.bgTikTokBtn.src:
-      return OFFSETS.FACE_TT_OFFSET;
+      return FACE_TOP_OFFSETS.FACE_TT_OFFSET;
     case backgroundButtons.bgGoogleBtn.src:
-      return OFFSETS.FACE_GOOGLE_OFFSET;
+      return FACE_TOP_OFFSETS.FACE_GOOGLE_OFFSET;
     case backgroundButtons.bgTwitterBtn.src:
-      return OFFSETS.FACE_TWITTER_OFFSET;
+      return FACE_TOP_OFFSETS.FACE_TWITTER_OFFSET;
     case backgroundButtons.bgInstBtn.src:
-      return OFFSETS.FACE_INST_OFFSET;
+      return FACE_TOP_OFFSETS.FACE_INST_OFFSET;
     default:
-      return OFFSETS.FACE_TT_OFFSET;
+      return FACE_TOP_OFFSETS.FACE_TT_OFFSET;
   }
 }
 
@@ -214,10 +219,7 @@ renderImageBtn.addEventListener("click", function () {
   renderHistory();
 });
 
-randomFaceBtn.addEventListener("click", function () {
-  removeLastRandomFace();
-  generateRandomFace();
-});
+randomFaceBtn.addEventListener("click", generateRandomFace);
 
 downloadBtn.addEventListener("click", function () {
   downloadImage(imageRender.src);
