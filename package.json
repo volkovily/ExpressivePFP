@@ -1,0 +1,22 @@
+{
+  "name": "expressivepfp",
+  "version": "1.0.0",
+  "description": "Expressive Profile Picture",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/volkovily/ExpressivePFP.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/volkovily/ExpressivePFP/issues"
+  },
+  "homepage": "https://github.com/volkovily/ExpressivePFP#readme",
+  "devDependencies": {
+    "eslint": "^8.31.0"
+  }
+}

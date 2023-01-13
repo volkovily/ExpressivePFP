@@ -22,6 +22,14 @@ const fileOperations = {
     link.download = "template.json";
     link.click();
   },
+  downloadImage: (url) => {
+    let anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = url;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+  },
 };
 
 export default fileOperations;

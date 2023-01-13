@@ -1,5 +1,7 @@
 import fileOperations from "./file_operations.js";
 
+import avatarFetcher from "./fetch.js";
+
 const canvas = new fabric.Canvas("canvasEditor");
 const emojiPicker = document.querySelector("emoji-picker");
 const imageRender = document.getElementById("imageRender");
@@ -7,7 +9,6 @@ const renderImageBtn = document.getElementById("renderImageBtn");
 const clearCanvasBtn = document.getElementById("clearCanvasBtn");
 const randomFaceBtn = document.getElementById("randomFaceBtn");
 const downloadBtn = document.getElementById("downloadBtn");
-const buttonsRendered = document.getElementById("buttonsRendered");
 
 const templateExportBtn = document.getElementById("saveTemplateBtn");
 const templateImportBtn = document.getElementById("importTemplateBtn");
@@ -36,43 +37,9 @@ const FACE_TOP_OFFSETS = {
 let history = [];
 
 const fetchAvatarBtn = document.getElementById("fetchAvatarBtn");
-fetchAvatarBtn.addEventListener("click", fetchAvatar);
-
-async function fetchAvatar() {
-  const username = prompt("Enter a GitHub username:");
-  if (!username) {
-    return;
-  }
-  try {
-    const response = await fetch(`https://api.github.com/users/${username}`);
-    if (response.ok) {
-      const json = await response.json();
-      updateFetchedAvatar(json);
-    } else {
-      alert(`The user "${username}" could not be found.`);
-    }
-  } catch (error) {
-    console.error(error);
-    alert("An error occurred while fetching the avatar.");
-  }
-}
-
-function updateFetchedAvatar(json) {
-  const fetchedImage = new Image();
-  fetchedImage.crossOrigin = "Anonymous";
-  fetchedImage.onload = function () {
-    onFetchedImageLoad(fetchedImage);
-  };
-  fetchedImage.src = json.avatar_url + "?not-from-cache-please";
-}
-
-function onFetchedImageLoad(fetchedImage) {
-  const imgInstance = new fabric.Image(fetchedImage);
-  imgInstance.scaleToWidth(canvas.width * 0.8);
-  canvas.setBackgroundImage(imgInstance, canvas.renderAll.bind(canvas));
-  imgInstance.scaleToWidth(canvas.getWidth());
-  canvas.centerObject(imgInstance);
-}
+fetchAvatarBtn.addEventListener("click", () =>
+  avatarFetcher.fetchAvatar(canvas)
+);
 
 emojiPicker.addEventListener("emoji-click", (emoji) => {
   const textbox = new fabric.Textbox(emoji.detail.unicode, {
@@ -178,17 +145,8 @@ for (const button of Object.values(backgroundButtons)) {
 
 setCanvasBackground(backgroundButtons.bgTikTokBtn.src);
 
-function downloadImage(url) {
-  let anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = url;
-  document.body.appendChild(anchor);
-  anchor.click();
-  document.body.removeChild(anchor);
-}
-
 renderImageBtn.addEventListener("click", function () {
-  buttonsRendered.style.visibility = "visible";
+  downloadBtn.style.visibility = "visible";
   const dataUrl = canvas.toDataURL();
   imageRender.src = dataUrl;
 
@@ -199,7 +157,7 @@ renderImageBtn.addEventListener("click", function () {
 randomFaceBtn.addEventListener("click", generateRandomFace);
 
 downloadBtn.addEventListener("click", function () {
-  downloadImage(imageRender.src);
+  fileOperations.downloadImage(imageRender.src);
 });
 
 templateImportBtn.onclick = () => {

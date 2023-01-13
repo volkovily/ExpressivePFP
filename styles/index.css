@@ -60,6 +60,9 @@ emoji-picker {
 #buttonsRendered {
   margin-top: 4px;
   text-align: center;
+}
+
+#downloadBtn {
   visibility: hidden;
 }
 
