@@ -1,3 +1,5 @@
+import fileOperations from "./file_operations.js";
+
 const canvas = new fabric.Canvas("canvasEditor");
 const emojiPicker = document.querySelector("emoji-picker");
 const imageRender = document.getElementById("imageRender");
@@ -45,16 +47,7 @@ async function fetchAvatar() {
     const response = await fetch(`https://api.github.com/users/${username}`);
     if (response.ok) {
       const json = await response.json();
-      const fetchedImage = new Image();
-      fetchedImage.crossOrigin = "Anonymous";
-      fetchedImage.onload = function () {
-        const imgInstance = new fabric.Image(fetchedImage);
-        imgInstance.scaleToWidth(canvas.width * 0.8);
-        canvas.setBackgroundImage(imgInstance, canvas.renderAll.bind(canvas));
-        imgInstance.scaleToWidth(canvas.getWidth());
-        canvas.centerObject(imgInstance);
-      };
-      fetchedImage.src = json.avatar_url + "?not-from-cache-please";
+      updateFetchedAvatar(json);
     } else {
       alert(`The user "${username}" could not be found.`);
     }
@@ -62,6 +55,23 @@ async function fetchAvatar() {
     console.error(error);
     alert("An error occurred while fetching the avatar.");
   }
+}
+
+function updateFetchedAvatar(json) {
+  const fetchedImage = new Image();
+  fetchedImage.crossOrigin = "Anonymous";
+  fetchedImage.onload = function () {
+    onFetchedImageLoad(fetchedImage);
+  };
+  fetchedImage.src = json.avatar_url + "?not-from-cache-please";
+}
+
+function onFetchedImageLoad(fetchedImage) {
+  const imgInstance = new fabric.Image(fetchedImage);
+  imgInstance.scaleToWidth(canvas.width * 0.8);
+  canvas.setBackgroundImage(imgInstance, canvas.renderAll.bind(canvas));
+  imgInstance.scaleToWidth(canvas.getWidth());
+  canvas.centerObject(imgInstance);
 }
 
 emojiPicker.addEventListener("emoji-click", (emoji) => {
@@ -177,39 +187,6 @@ function downloadImage(url) {
   document.body.removeChild(anchor);
 }
 
-function exportTemplateAsJSON() {
-  const json = canvas.toJSON();
-  const blob = new Blob([JSON.stringify(json)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = "template.json";
-
-  document.body.appendChild(anchor);
-  anchor.click();
-
-  document.body.removeChild(anchor);
-}
-
-templateFileInput.addEventListener("change", function (event) {
-  const file = event.target.files[0];
-
-  const reader = new FileReader();
-  reader.addEventListener("load", function () {
-    const json = JSON.parse(reader.result);
-    canvas.loadFromJSON(json, function () {
-      for (const object of canvas._objects) {
-        if (object.type === "textbox") {
-          object.set({ editable: false });
-        }
-      }
-      canvas.renderAll();
-    });
-  });
-  reader.readAsText(file);
-});
-
 renderImageBtn.addEventListener("click", function () {
   buttonsRendered.style.visibility = "visible";
   const dataUrl = canvas.toDataURL();
@@ -225,12 +202,16 @@ downloadBtn.addEventListener("click", function () {
   downloadImage(imageRender.src);
 });
 
-templateExportBtn.addEventListener("click", function () {
-  exportTemplateAsJSON();
+templateImportBtn.onclick = () => {
+  document.getElementById("templateFileInput").click();
+};
+
+templateFileInput.addEventListener("change", function (event) {
+  fileOperations.importTemplate(event.target, canvas);
 });
 
-templateImportBtn.addEventListener("click", function () {
-  document.getElementById("templateFileInput").click();
+templateExportBtn.addEventListener("click", () => {
+  fileOperations.exportTemplate(canvas);
 });
 
 clearCanvasBtn.addEventListener("click", function () {
