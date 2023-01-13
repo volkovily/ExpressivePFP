@@ -1,18 +1,22 @@
 import fileOperations from "./file_operations.js";
-
 import avatarFetcher from "./fetch.js";
 
-const canvas = new fabric.Canvas("canvasEditor");
-const emojiPicker = document.querySelector("emoji-picker");
-const imageRender = document.getElementById("imageRender");
-const renderImageBtn = document.getElementById("renderImageBtn");
-const clearCanvasBtn = document.getElementById("clearCanvasBtn");
-const randomFaceBtn = document.getElementById("randomFaceBtn");
-const downloadBtn = document.getElementById("downloadBtn");
+const pageElements = {
+  canvas: new fabric.Canvas("canvasEditor"),
+  emojiPicker: document.querySelector("emoji-picker"),
+  imageRender: document.getElementById("imageRender"),
+  templateFileInput: document.getElementById("templateFileInput"),
+};
 
-const templateExportBtn = document.getElementById("saveTemplateBtn");
-const templateImportBtn = document.getElementById("importTemplateBtn");
-const templateFileInput = document.getElementById("templateFileInput");
+const actionButtons = {
+  renderImageBtn: document.getElementById("renderImageBtn"),
+  clearCanvasBtn: document.getElementById("clearCanvasBtn"),
+  randomFaceBtn: document.getElementById("randomFaceBtn"),
+  downloadBtn: document.getElementById("downloadBtn"),
+  templateExportBtn: document.getElementById("saveTemplateBtn"),
+  templateImportBtn: document.getElementById("importTemplateBtn"),
+  fetchAvatarBtn: document.getElementById("fetchAvatarBtn"),
+};
 
 const backgroundButtons = {
   bgTikTokBtn: document.getElementById("backgroundTTBtn"),
@@ -25,41 +29,41 @@ const OFFSETS = {
   MAX_EMOJI_OFFSET: 200,
   FACE_LEFT_OFFSET: 66,
   FACE_FONT_SIZE: 120.12,
-};
-
-const FACE_TOP_OFFSETS = {
-  FACE_TT_OFFSET: 40,
+  FACE_DEFAULT_OFFSET: 40,
   FACE_GOOGLE_OFFSET: 50,
   FACE_TWITTER_OFFSET: 70,
   FACE_INST_OFFSET: 80,
 };
 
+const facePoseOffsets = {
+  [backgroundButtons.bgTikTokBtn.src]: OFFSETS.FACE_DEFAULT_OFFSET,
+  [backgroundButtons.bgGoogleBtn.src]: OFFSETS.FACE_GOOGLE_OFFSET,
+  [backgroundButtons.bgTwitterBtn.src]: OFFSETS.FACE_TWITTER_OFFSET,
+  [backgroundButtons.bgInstBtn.src]: OFFSETS.FACE_INST_OFFSET,
+};
+
 let history = [];
 
-const fetchAvatarBtn = document.getElementById("fetchAvatarBtn");
-fetchAvatarBtn.addEventListener("click", () =>
-  avatarFetcher.fetchAvatar(canvas)
-);
-
-emojiPicker.addEventListener("emoji-click", (emoji) => {
+pageElements.emojiPicker.addEventListener("emoji-click", (emoji) => {
   const textbox = new fabric.Textbox(emoji.detail.unicode, {
     editable: false,
     left: Math.random() * OFFSETS.MAX_EMOJI_OFFSET,
     top: Math.random() * OFFSETS.MAX_EMOJI_OFFSET,
   });
-  canvas.add(textbox);
+  pageElements.canvas.add(textbox);
 });
 
 function getRandomEmojiHex() {
+  // 0x600 - 0x637 is a range of face emojis in Hex
   const hex = Math.floor(Math.random() * (0x637 - 0x600 + 1)) + 0x600;
   return hex.toString(16);
 }
 
 const removeLastRandomFace = () => {
-  for (const object of canvas._objects) {
+  for (const object of pageElements.canvas._objects) {
     if (object.fontSize === OFFSETS.FACE_FONT_SIZE) {
-      canvas.remove(object);
-      canvas.renderAll();
+      pageElements.canvas.remove(object);
+      pageElements.canvas.renderAll();
       break;
     }
   }
@@ -76,24 +80,14 @@ const generateRandomFace = () => {
     top: getFacePose(),
     fontSize: OFFSETS.FACE_FONT_SIZE,
   });
-  canvas.add(textbox);
+  pageElements.canvas.add(textbox);
 };
 
 function getFacePose() {
-  const backgroundImageSrc = canvas.backgroundImage.getSrc();
-
-  switch (backgroundImageSrc) {
-    case backgroundButtons.bgTikTokBtn.src:
-      return FACE_TOP_OFFSETS.FACE_TT_OFFSET;
-    case backgroundButtons.bgGoogleBtn.src:
-      return FACE_TOP_OFFSETS.FACE_GOOGLE_OFFSET;
-    case backgroundButtons.bgTwitterBtn.src:
-      return FACE_TOP_OFFSETS.FACE_TWITTER_OFFSET;
-    case backgroundButtons.bgInstBtn.src:
-      return FACE_TOP_OFFSETS.FACE_INST_OFFSET;
-    default:
-      return FACE_TOP_OFFSETS.FACE_TT_OFFSET;
-  }
+  const backgroundImageSrc = pageElements.canvas.backgroundImage.getSrc();
+  const offset =
+    facePoseOffsets[backgroundImageSrc] || OFFSETS.FACE_DEFAULT_OFFSET;
+  return offset;
 }
 
 function isTemplateInHistory(image) {
@@ -101,10 +95,10 @@ function isTemplateInHistory(image) {
 }
 
 const saveCurrentState = () => {
-  const image = canvas.toDataURL({});
+  const image = pageElements.canvas.toDataURL({});
 
   if (!isTemplateInHistory(image)) {
-    const json = canvas.toJSON();
+    const json = pageElements.canvas.toJSON();
     history.push({ template: json, image });
   }
 };
@@ -116,7 +110,10 @@ const renderHistory = () => {
     const img = document.createElement("img");
     img.src = historyItem.image;
     img.addEventListener("click", () => {
-      canvas.loadFromJSON(historyItem.template, canvas.renderAll.bind(canvas));
+      pageElements.canvas.loadFromJSON(
+        historyItem.template,
+        pageElements.canvas.renderAll.bind(pageElements.canvas)
+      );
     });
     img.classList.add("history-image");
     img.addEventListener("contextmenu", removeItemFromHistory);
@@ -134,8 +131,14 @@ const removeItemFromHistory = (e) => {
 };
 
 const setCanvasBackground = (imageSrc) => {
-  canvas.setBackgroundImage(imageSrc, canvas.renderAll.bind(canvas), {});
+  pageElements.canvas.setBackgroundImage(
+    imageSrc,
+    pageElements.canvas.renderAll.bind(pageElements.canvas),
+    {}
+  );
 };
+
+setCanvasBackground(backgroundButtons.bgTikTokBtn.src);
 
 for (const button of Object.values(backgroundButtons)) {
   button.addEventListener("click", () => {
@@ -143,43 +146,45 @@ for (const button of Object.values(backgroundButtons)) {
   });
 }
 
-setCanvasBackground(backgroundButtons.bgTikTokBtn.src);
+actionButtons.fetchAvatarBtn.addEventListener("click", () =>
+  avatarFetcher.fetchAvatar(pageElements.canvas)
+);
 
-renderImageBtn.addEventListener("click", function () {
+actionButtons.randomFaceBtn.addEventListener("click", generateRandomFace);
+
+actionButtons.renderImageBtn.addEventListener("click", function () {
   downloadBtn.style.visibility = "visible";
-  const dataUrl = canvas.toDataURL();
-  imageRender.src = dataUrl;
+  const dataUrl = pageElements.canvas.toDataURL();
+  pageElements.imageRender.src = dataUrl;
 
   saveCurrentState();
   renderHistory();
 });
 
-randomFaceBtn.addEventListener("click", generateRandomFace);
-
-downloadBtn.addEventListener("click", function () {
-  fileOperations.downloadImage(imageRender.src);
+actionButtons.downloadBtn.addEventListener("click", function () {
+  fileOperations.downloadImage(pageElements.imageRender.src);
 });
 
-templateImportBtn.onclick = () => {
-  document.getElementById("templateFileInput").click();
+actionButtons.templateImportBtn.onclick = () => {
+  pageElements.templateFileInput.click();
 };
 
-templateFileInput.addEventListener("change", function (event) {
-  fileOperations.importTemplate(event.target, canvas);
+pageElements.templateFileInput.addEventListener("change", function (event) {
+  fileOperations.importTemplate(event.target, pageElements.canvas);
 });
 
-templateExportBtn.addEventListener("click", () => {
-  fileOperations.exportTemplate(canvas);
+actionButtons.templateExportBtn.addEventListener("click", () => {
+  fileOperations.exportTemplate(pageElements.canvas);
 });
 
-clearCanvasBtn.addEventListener("click", function () {
+actionButtons.clearCanvasBtn.addEventListener("click", function () {
   setCanvasBackground(backgroundButtons.bgTikTokBtn.src);
-  canvas.clear();
-  canvasImage();
+  pageElements.canvas.clear();
+  pageElements.canvasImage();
 });
 
 document.addEventListener("keydown", (event) => {
   if (event.code === "KeyX") {
-    canvas.remove(canvas.getActiveObject());
+    pageElements.canvas.remove(pageElements.canvas.getActiveObject());
   }
 });
