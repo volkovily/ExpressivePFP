@@ -17,7 +17,7 @@ const fileController = {
     const json = canvas.toJSON();
     const jsonString = JSON.stringify(json);
     const blob = new Blob([jsonString], { type: "application/json" });
-    const link = document.createElement("url");
+    const link = document.createElement("a");
     link.href = window.URL.createObjectURL(blob);
     link.download = "template.json";
     link.click();

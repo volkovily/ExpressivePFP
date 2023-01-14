@@ -29,15 +29,15 @@ const createHistoryImage = (item, canvas) => {
   img.addEventListener("click", () => {
     canvas.loadFromJSON(item.template, canvas.renderAll.bind(canvas));
   });
-  img.addEventListener("contextmenu", removeItemFromHistory);
+  img.addEventListener("contextmenu", (e) => removeItemFromHistory(e, canvas));
   return img;
 };
 
-const removeItemFromHistory = (e) => {
+const removeItemFromHistory = (e, canvas) => {
   e.preventDefault();
   if (confirm(`Delete selected image?`)) {
     const image = e.target.src;
     history = history.filter((historyItem) => historyItem.image !== image);
-    renderHistory();
+    renderHistory(canvas);
   }
 };

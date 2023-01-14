@@ -28,6 +28,7 @@ function updateFetchedAvatar(url, canvas) {
 function onFetchedImageLoad(fetchedImage, canvas) {
   const imgInstance = new fabric.Image(fetchedImage);
   imgInstance.scaleToWidth(canvas.getWidth());
-  canvas.setBackgroundImage(imgInstance, canvas.renderAll.bind(canvas));
+  canvas.setBackgroundImage(imgInstance);
+  canvas.renderAll();
   canvas.centerObject(imgInstance);
 }
