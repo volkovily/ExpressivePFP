@@ -1,4 +1,4 @@
-const fileOperations = {
+const fileController = {
   importTemplate: (fileInput, canvas) => {
     const file = fileInput.files[0];
     if (!file) {
@@ -17,7 +17,7 @@ const fileOperations = {
     const json = canvas.toJSON();
     const jsonString = JSON.stringify(json);
     const blob = new Blob([jsonString], { type: "application/json" });
-    const link = document.createElement("a");
+    const link = document.createElement("url");
     link.href = window.URL.createObjectURL(blob);
     link.download = "template.json";
     link.click();
@@ -32,4 +32,4 @@ const fileOperations = {
   },
 };
 
-export default fileOperations;
+export default fileController;
