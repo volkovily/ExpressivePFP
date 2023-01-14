@@ -7,6 +7,10 @@ const fileController = {
     const reader = new FileReader();
     reader.onload = async function () {
       const json = JSON.parse(reader.result);
+      if (!json.hasOwnProperty("objects")) {
+        alert("Invalid template format!");
+        return;
+      }
       await canvas.loadFromJSON(json, () => {
         canvas.renderAll();
       });

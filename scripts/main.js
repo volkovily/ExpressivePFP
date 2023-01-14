@@ -1,6 +1,6 @@
 import fileController from "./fileController.js";
 import { fetchAvatar } from "./avatarFetch.js";
-import {backgroundButtons, generateRandomFace, setCanvasBackground} from "./canvasEditor.js";
+import { generateRandomFace, backgroundHandler } from "./canvasEditor.js";
 import { saveCurrentState, renderHistory } from "./historyController.js";
 
 const pageElements = {
@@ -31,13 +31,7 @@ pageElements.emojiPicker.addEventListener("emoji-click", (emoji) => {
   pageElements.canvas.add(textbox);
 });
 
-setCanvasBackground(pageElements.canvas, backgroundButtons.bgTikTokBtn.src);
-
-for (const button of Object.values(backgroundButtons)) {
-  button.addEventListener("click", () => {
-    setCanvasBackground(pageElements.canvas, button.src);
-  });
-}
+backgroundHandler(pageElements.canvas);
 
 actionButtons.fetchAvatarBtn.addEventListener("click", () =>
   fetchAvatar(pageElements.canvas)

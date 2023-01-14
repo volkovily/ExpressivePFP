@@ -72,6 +72,14 @@ export const generateRandomFace = (canvas) => {
   canvas.add(textbox);
 };
 
-export const setCanvasBackground = (canvas, imageSrc) => {
+const setCanvasBackground = (canvas, imageSrc) => {
   canvas.setBackgroundImage(imageSrc, canvas.renderAll.bind(canvas), {});
+};
+
+export const backgroundHandler = (canvas) => {
+  for (const button of Object.values(backgroundButtons)) {
+    button.addEventListener("click", () => {
+      setCanvasBackground(canvas, button.src);
+    });
+  }
 };
